@@ -401,7 +401,7 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
               attr.time_capacity = miss_time;
               attr.deadline      = POK_CURRENT_THREAD.time_capacity;
               attr.entry         = POK_CURRENT_THREAD.entry;
-              attr.dynamic       = TRUE;
+              attr.user_add       = TRUE;
               attr.weight        = POK_CURRENT_THREAD.weight;
               attr.priority      = POK_CURRENT_THREAD.priority;
 
