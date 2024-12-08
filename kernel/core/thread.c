@@ -138,7 +138,7 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
    * We can create a thread only if the partition is in INIT mode
    */
   if ((pok_partitions[partition_id].mode != POK_PARTITION_MODE_INIT_COLD) &&
-      (pok_partitions[partition_id].mode != POK_PARTITION_MODE_INIT_WARM)) {
+      (pok_partitions[partition_id].mode != POK_PARTITION_MODE_INIT_WARM) && (!attr->dynamic)) {
     return POK_ERRNO_MODE;
   }
 
@@ -175,6 +175,11 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
   if (attr->deadline > 0) {
     pok_threads[id].deadline = attr->deadline;
     pok_threads[id].update_deadline = attr->deadline;
+  }
+
+  if (attr->soft_t) {
+    pok_threads[id].soft_t = attr->soft_t;
+    pok_threads[id].soft_deadline = attr->soft_deadline;
   }
 
   if (attr->time_capacity > 0) {
