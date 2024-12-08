@@ -137,7 +137,6 @@ int main() {
   memset(&tattr, 0, sizeof(pok_thread_attr_t));
 
   tattr.period = -1;
-  tattr.period = 40;
   tattr.priority = 20;
   tattr.entry = user_thread;
   pok_thread_create(&tid, &tattr);
