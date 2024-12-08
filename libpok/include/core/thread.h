@@ -36,11 +36,11 @@ typedef struct {
   uint32_t stack_size;
   uint32_t state;
   bool_t user_add;
-  uint8_t finish_num;
-  uint8_t miss_num;
-  uint8_t total_num;
   bool_t soft_t;
   uint64_t soft_deadline;
+  uint8_t finish_num;
+  uint8_t miss_num;
+  uint32_t total_num;
 } pok_thread_attr_t;
 
 void pok_thread_init(void);

@@ -85,9 +85,9 @@ typedef struct {
   bool_t user_add;
   uint8_t finish_num;
   uint8_t miss_num;
-  uint8_t total_num;
   bool_t soft_t;  /* Indicate if the thread has a soft_deadline */
   uint64_t soft_deadline;
+  uint32_t total_num;
 } pok_thread_attr_t;
 /*
  * Attributes given to create a thread
