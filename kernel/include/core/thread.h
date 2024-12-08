@@ -64,6 +64,8 @@ typedef struct {
   uint32_t init_stack_addr;
   uint8_t base_priority;
   uint8_t processor_affinity;
+  uint8_t finish_num;
+  uint8_t miss_num;
   bool_t soft_t;  /* Indicate if the thread has a soft_deadline */
   uint64_t soft_deadline;
   /* stack pointer
@@ -80,7 +82,10 @@ typedef struct {
   uint64_t time_capacity;
   uint32_t stack_size;
   pok_state_t state;
-  bool_t dynamic; /* thread create dynamic in user mode should set this attr TRUE*/
+  bool_t user_add;
+  uint8_t finish_num;
+  uint8_t miss_num;
+  uint8_t total_num;
   bool_t soft_t;  /* Indicate if the thread has a soft_deadline */
   uint64_t soft_deadline;
 } pok_thread_attr_t;
