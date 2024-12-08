@@ -178,6 +178,11 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
     pok_threads[id].update_deadline = POK_GETTICK()+attr->deadline;
   }
 
+  if (attr->soft_t == TRUE) {
+    pok_threads[id].soft_t = attr->soft_t;
+    pok_threads[id].soft_deadline = attr->soft_deadline;
+  }
+
   pok_threads[id].finish_num = 0;
   pok_threads[id].miss_num = 0;
 

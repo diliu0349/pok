@@ -66,6 +66,8 @@ typedef struct {
   uint8_t processor_affinity;
   uint8_t finish_num;
   uint8_t miss_num;
+  bool_t soft_t;  /* Indicate if the thread has a soft_deadline */
+  uint64_t soft_deadline;
   /* stack pointer
    * FIXME: this is platform-dependent code, we have to handle that ! */
 } pok_thread_t;
@@ -84,6 +86,8 @@ typedef struct {
   uint8_t finish_num;
   uint8_t miss_num;
   uint32_t total_num;
+  bool_t soft_t;  /* Indicate if the thread has a soft_deadline */
+  uint64_t soft_deadline;
 } pok_thread_attr_t;
 /*
  * Attributes given to create a thread

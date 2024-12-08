@@ -325,6 +325,7 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
         thread->state = POK_STATE_RUNNABLE;
         thread->remaining_time_capacity = thread->time_capacity;
         thread->update_deadline = thread->next_activation + thread->deadline;
+        thread->soft_deadline   = thread->next_activation + thread->soft_deadline;
         thread->next_activation = thread->next_activation + thread->period;
       }
     }
@@ -388,6 +389,37 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
           (unsigned)POK_CURRENT_THREAD.next_activation);
 #endif /* POK_NEEDS_SCHED_VERBOSE */
         POK_CURRENT_THREAD.state = POK_STATE_WAIT_NEXT_ACTIVATION;
+        if (POK_CURRENT_THREAD.soft_t == TRUE) {
+          if (now > POK_CURRENT_THREAD.soft_deadline) {
+            uint64_t miss_time = now - POK_CURRENT_THREAD.soft_deadline;
+            printf("miss_time: %llu, now: %llu, soft_ddl: %llu.\n", miss_time, now, POK_CURRENT_THREAD.soft_deadline);
+            if (miss_time > 0) {
+              uint32_t tid;
+              pok_thread_attr_t attr;
+              memset(&attr, 0, sizeof(pok_thread_attr_t));
+              attr.period        = POK_CURRENT_THREAD.period;
+              attr.time_capacity = miss_time;
+              attr.deadline      = POK_CURRENT_THREAD.time_capacity;
+              attr.entry         = POK_CURRENT_THREAD.entry;
+              attr.user_add      = TRUE;
+              attr.weight        = POK_CURRENT_THREAD.weight;
+              attr.priority      = POK_CURRENT_THREAD.priority;
+              pok_ret_t ret;
+              ret = pok_partition_thread_create(&tid, &attr, new_partition_id);
+              if (ret == POK_ERRNO_OK) {
+                  printf("Thread %u created, period: %u, time capacity: %u, deadline: %u.\n",
+                        (unsigned)tid,
+                        (unsigned)attr.period,
+                        (unsigned)attr.time_capacity,
+                        (unsigned)attr.deadline);
+              } else if (ret == POK_ERRNO_TOOMANY) {
+                  printf("Error: too many thread.\n");
+              } else {
+                  printf("Unknown error occurred.\n");
+              }
+            }
+          }
+        }
       }
     }
     elected = new_partition->sched_func(

@@ -15,6 +15,7 @@
 #include <core/partition.h>
 #include <core/thread.h>
 #include <libc/stdio.h>
+#include <libc/string.h>
 #include <core/time.h>
 #include <types.h>
 
@@ -34,6 +35,7 @@ void task() {
 int add_task(uint64_t period, uint64_t time_capacity, uint8_t pri, uint64_t deadline) {
   uint32_t tid;
   pok_thread_attr_t tattr;
+  memset(&tattr, 0, sizeof(pok_thread_attr_t));
 
   tattr.period = period;
   tattr.priority = pri;
@@ -132,6 +134,7 @@ void user_thread() {
 int main() {
   uint32_t tid;
   pok_thread_attr_t tattr;
+  memset(&tattr, 0, sizeof(pok_thread_attr_t));
 
   tattr.period = -1;
   tattr.period = 40;
