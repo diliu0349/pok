@@ -64,8 +64,8 @@ typedef struct {
   uint32_t init_stack_addr;
   uint8_t base_priority;
   uint8_t processor_affinity;
-  uint8_t finish_num;
-  uint8_t miss_num;
+  uint32_t finish_num;
+  uint32_t miss_num;
   uint64_t soft_deadline;
   uint64_t update_soft_deadline;
   /* stack pointer
@@ -83,8 +83,8 @@ typedef struct {
   uint32_t stack_size;
   pok_state_t state;
   bool_t user_add;
-  uint8_t finish_num;
-  uint8_t miss_num;
+  uint32_t finish_num;
+  uint32_t miss_num;
   uint32_t total_num;
   uint64_t soft_deadline;
 } pok_thread_attr_t;
