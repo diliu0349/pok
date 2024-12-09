@@ -39,7 +39,6 @@ typedef struct {
   uint8_t finish_num;
   uint8_t miss_num;
   uint32_t total_num;
-  bool_t soft_t;
   uint64_t soft_deadline;
 } pok_thread_attr_t;
 

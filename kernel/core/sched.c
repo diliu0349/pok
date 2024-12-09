@@ -318,7 +318,7 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
         thread->state = POK_STATE_RUNNABLE;
         thread->remaining_time_capacity = thread->time_capacity;
         thread->update_deadline = thread->next_activation + thread->deadline;
-        thread->soft_deadline   = thread->next_activation + thread->soft_deadline;
+        thread->update_soft_deadline   = thread->next_activation + thread->soft_deadline;
         thread->next_activation = thread->next_activation + thread->period;
       }
     }
@@ -382,10 +382,11 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
           (unsigned)POK_CURRENT_THREAD.next_activation);
 #endif /* POK_NEEDS_SCHED_VERBOSE */
         POK_CURRENT_THREAD.state = POK_STATE_WAIT_NEXT_ACTIVATION;
-        if (POK_CURRENT_THREAD.soft_t == TRUE) {
-          if (now > POK_CURRENT_THREAD.soft_deadline) {
-            uint64_t miss_time = now - POK_CURRENT_THREAD.soft_deadline;
-            printf("miss_time: %llu, now: %llu, soft_ddl: %llu.\n", miss_time, now, POK_CURRENT_THREAD.soft_deadline);
+        if (POK_CURRENT_THREAD.soft_deadline > 0) {
+          // printf("now: %llu. soft_ddl: %llu, hard_ddl: %llu\n", POK_GETTICK(), POK_CURRENT_THREAD.update_soft_deadline, POK_CURRENT_THREAD.update_deadline);
+          if (now > POK_CURRENT_THREAD.update_soft_deadline) {
+            uint64_t miss_time = now - POK_CURRENT_THREAD.update_soft_deadline;
+            // printf("miss_time: %llu, now: %llu, soft_ddl: %llu.\n", miss_time, now, POK_CURRENT_THREAD.update_soft_deadline);
             if (miss_time > 0) {
               uint32_t tid;
               pok_thread_attr_t attr;
@@ -399,15 +400,9 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
               attr.priority      = POK_CURRENT_THREAD.priority;
               pok_ret_t ret;
               ret = pok_partition_thread_create(&tid, &attr, new_partition_id);
-              if (ret == POK_ERRNO_OK) {
-                  printf("Thread %u created, period: %u, time capacity: %u, deadline: %u.\n",
-                        (unsigned)tid,
-                        (unsigned)attr.period,
-                        (unsigned)attr.time_capacity,
-                        (unsigned)attr.deadline);
-              } else if (ret == POK_ERRNO_TOOMANY) {
+              if (ret == POK_ERRNO_TOOMANY) {
                   printf("Error: too many thread.\n");
-              } else {
+              } else if (ret != POK_ERRNO_OK) {
                   printf("Unknown error occurred.\n");
               }
             }
@@ -814,19 +809,19 @@ uint32_t pok_sched_part_rr(const uint32_t index_low, const uint32_t index_high,
         // printf("\n");
       }
     }
-    // if (non_ready) {
-    //   // printf("    non-ready:");
-    //   uint32_t first = 1;
-    //   for (uint32_t i = index_low; i < index_high; i++) {
-    //     if (pok_threads[i].state != POK_STATE_RUNNABLE &&
-    //         pok_threads[i].processor_affinity == current_proc) {
-    //       printf("%s %d (%d/%s)", first ? "" : ",", i, pok_threads[i].priority,
-    //              state_names[pok_threads[i].state]);
-    //       first = 0;
-    //     }
-    //   }
-    //   printf("\n");
-    // }
+    if (non_ready) {
+      // printf("    non-ready:");
+      uint32_t first = 1;
+      for (uint32_t i = index_low; i < index_high; i++) {
+        if (pok_threads[i].state != POK_STATE_RUNNABLE &&
+            pok_threads[i].processor_affinity == current_proc) {
+          printf("%s %d (%d/%s)", first ? "" : ",", i, pok_threads[i].priority,
+                 state_names[pok_threads[i].state]);
+          first = 0;
+        }
+      }
+      printf("\n");
+    }
   }
 #endif
   return elected;
@@ -874,6 +869,18 @@ static uint32_t select_thread_rr(rr_budget_getter_fn budget_getter, const uint32
         /* Reset budget for the newly selected thread*/
         pok_threads[res].rr_budget = budget_getter(res);
     }
+
+#ifdef POK_NEEDS_SCHED_VERBOSE
+    if (res != current_thread &&
+        (res != IDLE_THREAD || current_thread != IDLE_THREAD)) {
+      if (res != IDLE_THREAD) {
+        printf("[LOG] Schedule partition %d thread %d at %lld\n",
+          pok_current_partition,
+          res-index_low,
+          POK_GETTICK());
+      }
+    }
+#endif /* POK_NEEDS_SCHED_VERBOSE */
 
     return res;
 }

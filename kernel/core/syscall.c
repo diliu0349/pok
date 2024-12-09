@@ -26,6 +26,7 @@
 #include <core/syscall.h>
 #include <core/thread.h>
 #include <core/time.h>
+#include <core/top.h>
 #include <errno.h>
 
 #include <middleware/port.h>
@@ -459,6 +460,10 @@ pok_ret_t pok_core_syscall(const pok_syscall_id_t syscall_id,
       ;
 
 #endif
+
+  case POK_SYSCALL_TOP:
+    pok_top();
+    break;
 
   /**
    * Here is the default syscall handler. In this case, the syscall
