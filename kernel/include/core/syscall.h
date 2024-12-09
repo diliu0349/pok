@@ -96,8 +96,10 @@ typedef enum {
   POK_SYSCALL_RTL8929_INIT = 706,
 #endif
 #if POK_NEEDS_SHUTDOWN
-  POK_SYSCALL_SHUTDOWN = 707
+  POK_SYSCALL_SHUTDOWN = 707,
 #endif
+
+  POK_SYSCALL_TOP = 708
 } pok_syscall_id_t;
 
 typedef struct {
