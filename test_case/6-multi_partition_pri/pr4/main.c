@@ -15,7 +15,7 @@
 #include <core/partition.h>
 #include <core/thread.h>
 #include <libc/stdio.h>
-#include <types.h>
+#include <libc/string.h>
 
 uint8_t sid;
 
@@ -27,9 +27,10 @@ void task() {
 int main() {
   uint32_t tid;
   pok_thread_attr_t tattr;
+  memset(&tattr, 0, sizeof(pok_thread_attr_t));
 
-  tattr.period = 100;
-  tattr.time_capacity = 10;
+  tattr.period = 800;
+  tattr.time_capacity = 800;
   tattr.entry = task;
   pok_thread_create(&tid, &tattr);
 

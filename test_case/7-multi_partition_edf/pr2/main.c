@@ -28,8 +28,8 @@ int main() {
   uint32_t tid;
   pok_thread_attr_t tattr;
 
-  tattr.period = 100;
-  tattr.time_capacity = 10;
+  tattr.period = 600;
+  tattr.time_capacity = 600;
   tattr.entry = task;
   pok_thread_create(&tid, &tattr);
 
