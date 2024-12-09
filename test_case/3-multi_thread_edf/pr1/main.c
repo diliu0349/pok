@@ -15,6 +15,7 @@
 #include <core/partition.h>
 #include <core/thread.h>
 #include <libc/stdio.h>
+#include <libc/string.h>
 #include <core/time.h>
 #include <types.h>
 
@@ -28,6 +29,7 @@ void task() {
 int main() {
   uint32_t tid;
   pok_thread_attr_t tattr;
+  memset(&tattr, 0, sizeof(pok_thread_attr_t));
 
   tattr.period = 1200;
   tattr.time_capacity = 200;

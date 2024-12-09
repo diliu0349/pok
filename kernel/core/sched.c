@@ -194,13 +194,6 @@ void pok_sched_init(void) {
       frame_remain -= pok_sched_slots[i];
   }
   pok_sched_slots[POK_CONFIG_NB_PARTITIONS - 1] = frame_remain;
-#ifdef POK_NEEDS_DEBUG
-    printf("Weighted Round Robin Slot: ");
-    for (int i = 0; i < POK_CONFIG_NB_PARTITIONS; i++) {
-      printf("%lld ", pok_sched_slots[i]);
-    }
-    printf("\n");
-#endif
 #endif
 
   /*
